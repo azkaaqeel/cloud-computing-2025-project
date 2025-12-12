@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Login - HireHive Labs</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">HireHive Labs</h1>
+            <nav>
+                <a href="../index.html" class="nav-link">Public Site</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="login-container">
+                <div class="login-card">
+                    <h2>HR Portal Login</h2>
+                    <p class="login-subtitle">Access the HR dashboard to manage jobs and applications</p>
+                    
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required autocomplete="email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" required autocomplete="current-password">
+                        </div>
+                        
+                        <button type="submit" id="loginBtn" class="btn btn-primary btn-block">Login</button>
+                        
+                        <div id="message" class="message"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../api.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>
+

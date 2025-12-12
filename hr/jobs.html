@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Jobs - HireHive Labs</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="../api.js"></script>
+    <script>
+        // Protect route
+        if (!AuthAPI.isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">HireHive Labs</h1>
+            <nav>
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="jobs.html" class="nav-link active">Jobs</a>
+                <a href="#" onclick="AuthAPI.logout(); return false;" class="nav-link">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h2>Manage Jobs</h2>
+                <button class="btn btn-secondary" onclick="toggleJobForm()">+ Add New Job</button>
+            </div>
+
+            <!-- Add Job Form -->
+            <div id="addJobForm" class="form-card" style="display: none;">
+                <h3>Add New Job</h3>
+                <form id="newJobForm">
+                    <div class="form-group">
+                        <label for="jobTitle">Job Title *</label>
+                        <input type="text" id="jobTitle" name="jobTitle" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="jobDescription">Description *</label>
+                        <textarea id="jobDescription" name="jobDescription" rows="5" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="jobIsActive" name="jobIsActive" checked>
+                            Active (accepting applications)
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Create Job</button>
+                    <button type="button" class="btn btn-secondary" onclick="toggleJobForm()">Cancel</button>
+                    
+                    <div id="jobFormMessage" class="message"></div>
+                </form>
+            </div>
+
+            <!-- Jobs List -->
+            <div id="loading" class="loading">Loading jobs...</div>
+            <div id="error" class="message error" style="display: none;"></div>
+            <div id="jobsList" class="jobs-list"></div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 HireHive Labs. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="jobs.js"></script>
+</body>
+</html>
+

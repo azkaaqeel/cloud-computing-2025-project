@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applications - HireHive Labs</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="../api.js"></script>
+    <script>
+        // Protect route
+        if (!AuthAPI.isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">HireHive Labs</h1>
+            <nav>
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="jobs.html" class="nav-link">Jobs</a>
+                <a href="#" onclick="AuthAPI.logout(); return false;" class="nav-link">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <a href="jobs.html" class="back-link">← Back to Jobs</a>
+                <h2 id="pageTitle">Applications</h2>
+            </div>
+
+            <div id="loading" class="loading">Loading applications...</div>
+            <div id="error" class="message error" style="display: none;"></div>
+            <div id="noApplications" class="message" style="display: none;">
+                <p>No applications found for this job.</p>
+            </div>
+
+            <div id="applicationsList" class="applications-list"></div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 HireHive Labs. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="applications.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply - HireHive Labs</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">HireHive Labs</h1>
+            <nav>
+                <a href="index.html" class="nav-link">Careers</a>
+                <a href="hr/login.html" class="nav-link">HR Portal</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <a href="index.html" class="back-link">← Back to Careers</a>
+                <h2>Apply for Position</h2>
+            </div>
+
+            <div id="jobInfo" class="job-info-card">
+                <h3 id="jobTitle">Loading...</h3>
+                <p id="jobDescription"></p>
+            </div>
+
+            <div class="application-form-container">
+                <form id="applicationForm" class="application-form">
+                    <h3>Application Form</h3>
+                    
+                    <div class="form-group">
+                        <label for="fullName">Full Name *</label>
+                        <input type="text" id="fullName" name="fullName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="resumeFile">Resume File *</label>
+                        <input type="file" id="resumeFile" name="resumeFile" accept=".pdf,.docx" required>
+                        <small class="file-hint">PDF or DOCX format, maximum 5MB</small>
+                        <div id="fileSizeInfo" class="file-size-info" style="display: none;"></div>
+                    </div>
+                    
+                    <button type="submit" id="uploadBtn" class="btn btn-primary">Submit Application</button>
+                    
+                    <div id="message" class="message"></div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 HireHive Labs. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="api.js"></script>
+    <script src="upload.js"></script>
+    <script src="apply.js"></script>
+</body>
+</html>
+

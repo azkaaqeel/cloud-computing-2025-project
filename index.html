@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Careers at HireHive Labs</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">HireHive Labs</h1>
+            <nav>
+                <a href="index.html" class="nav-link active">Careers</a>
+                <a href="hr/login.html" class="nav-link">HR Portal</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h2>Careers at HireHive Labs</h2>
+                <p class="subtitle">Join our team and help build the future</p>
+            </div>
+
+            <div id="loading" class="loading">Loading job openings...</div>
+            <div id="error" class="message error" style="display: none;"></div>
+            <div id="noJobs" class="message" style="display: none;">
+                <p>We don't have any open positions at the moment. Please check back later!</p>
+            </div>
+
+            <div id="jobsList" class="jobs-list"></div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 HireHive Labs. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="api.js"></script>
+    <script src="careers.js"></script>
+</body>
+</html>
