@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Applications - HireHive Labs</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="../api.js"></script>
+    <script>
+        // Protect route
+        if (!AuthAPI.isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">HireHive Labs</h1>
+            <nav>
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="jobs.html" class="nav-link">Jobs</a>
+                <a href="all-applications.html" class="nav-link active">All Applications</a>
+                <a href="#" onclick="AuthAPI.logout(); return false;" class="nav-link">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h2>All Applications</h2>
+                <p class="subtitle">View and manage all job applications</p>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters-card">
+                <h3>Filters</h3>
+                <div class="filters-grid">
+                    <div class="form-group">
+                        <label for="filterJob">Filter by Job</label>
+                        <select id="filterJob" class="form-control">
+                            <option value="">All Jobs</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="filterStatus">Filter by Status</label>
+                        <select id="filterStatus" class="form-control">
+                            <option value="">All Statuses</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="searchInput">Search</label>
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search by name, email, job title...">
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button onclick="applyFilters()" class="btn btn-primary">Apply Filters</button>
+                        <button onclick="clearFilters()" class="btn btn-secondary">Clear</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Applications List -->
+            <div id="loading" class="loading">Loading applications...</div>
+            <div id="error" class="message error" style="display: none;"></div>
+            <div id="noApplications" class="message" style="display: none;">
+                <p>No applications found matching your filters.</p>
+            </div>
+
+            <div id="applicationsList" class="applications-list"></div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 HireHive Labs. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="all-applications.js"></script>
+</body>
+</html>

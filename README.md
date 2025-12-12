@@ -39,47 +39,60 @@ A complete job application portal for HireHive Labs, allowing applicants to appl
 
 ## Setup
 
-### 1. Azure Blob Storage Configuration
+### Quick Start
 
-Update the SAS URL in `upload.js`:
-```javascript
-const SAS_URL = 'YOUR_SAS_URL_HERE';
-```
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-### 2. CORS Configuration
+2. **Configure environment:**
+   - Create `.env` file (see `INSTALL.md` for template)
+   - Add your Azure SQL Database credentials
+   - Add your Azure Blob Storage connection string
 
-Configure CORS on your Azure Storage Account to allow requests from your domain:
-- Allowed origins: `http://localhost:8000,http://127.0.0.1:8000,http://[::]:8000`
-- Allowed methods: `PUT,GET,HEAD,OPTIONS`
-- Allowed headers: `*`
-- See `CORS_SETUP_INSTRUCTIONS.md` for details
+3. **Set up SQL Database:**
+   - Run `schema.sql` in your Azure SQL Database
+   - See `SETUP.md` for detailed instructions
 
-### 3. API Configuration
+4. **Start backend server:**
+   ```bash
+   npm start
+   ```
+   Server runs on `http://localhost:3000`
 
-Update the API base URL in `api.js`:
-```javascript
-const API_BASE_URL = '/api';
-```
+5. **Start frontend (in new terminal):**
+   ```bash
+   python3 -m http.server 8000
+   ```
+   Access at `http://localhost:8000`
 
-The application includes mock data fallbacks for development. Replace with your actual API endpoints:
+### Detailed Setup
 
-- `GET /api/jobs` - Get active jobs
-- `GET /api/jobs/all` - Get all jobs (HR)
-- `GET /api/jobs/:jobId` - Get job by ID
-- `POST /api/jobs` - Create new job
-- `DELETE /api/jobs/:jobId` - Deactivate job
+For complete setup instructions, see:
+- **`INSTALL.md`** - Quick installation guide
+- **`SETUP.md`** - Detailed setup with troubleshooting
+
+### Backend API Endpoints
+
+The backend server provides the following endpoints:
+
+- `POST /api/applications` - Submit job application (with file upload)
+- `GET /api/applications` - Get all applications
 - `GET /api/applications/job/:jobId` - Get applications for a job
-- `POST /api/applications` - Submit application
-- `POST /api/hr/login` - HR login
+- `GET /api/health` - Health check
 
-### 4. Run Locally
+### Frontend API Integration
 
-Start a local web server:
-```bash
-python3 -m http.server 8000
-```
+The frontend uses mock data fallbacks for development. The backend provides real endpoints:
 
-Then open `http://localhost:8000` in your browser.
+- `GET /api/jobs` - Get active jobs (mock data fallback)
+- `GET /api/jobs/all` - Get all jobs (mock data fallback)
+- `GET /api/jobs/:jobId` - Get job by ID (mock data fallback)
+- `POST /api/jobs` - Create new job (mock data fallback)
+- `DELETE /api/jobs/:jobId` - Deactivate job (mock data fallback)
+- `POST /api/applications` - Submit application (real backend)
+- `POST /api/hr/login` - HR login (mock data fallback)
 
 ## Usage
 

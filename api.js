@@ -1,6 +1,7 @@
 // API Integration Layer for HireHive Labs
 // Base API URL - update this to match your backend
-const API_BASE_URL = '/api';
+// Use full URL when backend runs on different port, or relative when same origin
+const API_BASE_URL = window.API_BASE_URL || (window.location.port === '3000' ? '/api' : 'http://localhost:3000/api');
 
 /**
  * Generate UUID v4
@@ -142,12 +143,56 @@ const JobsAPI = {
     },
 
     /**
-     * Deactivate a job
+     * Create a new job
      */
-    async deactivateJob(jobId) {
+    async createJob(jobData) {
+        return await apiRequest('/jobs', {
+            method: 'POST',
+            body: JSON.stringify(jobData),
+        });
+    },
+
+    /**
+     * Update a job
+     */
+    async updateJob(jobId, jobData) {
+        return await apiRequest(`/jobs/${jobId}`, {
+            method: 'PUT',
+            body: JSON.stringify(jobData),
+        });
+    },
+
+    /**
+     * Delete a job
+     */
+    async deleteJob(jobId) {
         return await apiRequest(`/jobs/${jobId}`, {
             method: 'DELETE',
         });
+    },
+
+    /**
+     * Toggle job active status (activate/deactivate)
+     */
+    async toggleJobStatus(jobId, isActive) {
+        return await apiRequest(`/jobs/${jobId}/status`, {
+            method: 'PATCH',
+            body: JSON.stringify({ isActive }),
+        });
+    },
+
+    /**
+     * Deactivate a job (convenience method)
+     */
+    async deactivateJob(jobId) {
+        return await this.toggleJobStatus(jobId, false);
+    },
+
+    /**
+     * Activate a job (convenience method)
+     */
+    async activateJob(jobId) {
+        return await this.toggleJobStatus(jobId, true);
     }
 };
 
@@ -197,6 +242,57 @@ const ApplicationsAPI = {
             console.warn('API not available, application submission skipped:', error);
             // Return mock success
             return { success: true, applicationId: applicationData.applicationId };
+        }
+    },
+
+    /**
+     * Update application status (Approve/Reject)
+     */
+    async updateApplicationStatus(applicationId, status) {
+        try {
+            return await apiRequest(`/applications/${applicationId}/status`, {
+                method: 'PATCH',
+                body: JSON.stringify({
+                    status
+                }),
+            });
+        } catch (error) {
+            console.warn('API not available, using mock response:', error);
+            // Return mock success
+            return { success: true, message: `Application ${status.toLowerCase()} successfully` };
+        }
+    },
+
+    /**
+     * Get application statistics
+     */
+    async getStatistics() {
+        try {
+            return await apiRequest('/applications/stats/summary');
+        } catch (error) {
+            console.warn('API not available:', error);
+            return {
+                summary: { total: 0, pending: 0, approved: 0, rejected: 0 },
+                byJob: []
+            };
+        }
+    },
+
+    /**
+     * Filter applications
+     */
+    async filterApplications(filters = {}) {
+        try {
+            const params = new URLSearchParams();
+            if (filters.jobId) params.append('jobId', filters.jobId);
+            if (filters.status) params.append('status', filters.status);
+            if (filters.search) params.append('search', filters.search);
+            
+            const queryString = params.toString();
+            return await apiRequest(`/applications/filter${queryString ? '?' + queryString : ''}`);
+        } catch (error) {
+            console.warn('API not available:', error);
+            return [];
         }
     }
 };

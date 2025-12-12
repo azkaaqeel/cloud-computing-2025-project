@@ -9,17 +9,32 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         const title = document.getElementById('jobTitle').value.trim();
         const description = document.getElementById('jobDescription').value.trim();
+        const department = document.getElementById('jobDepartment').value.trim();
+        const location = document.getElementById('jobLocation').value.trim();
+        const employmentType = document.getElementById('jobEmploymentType').value.trim();
+        const salaryRange = document.getElementById('jobSalaryRange').value.trim();
+        const requirements = document.getElementById('jobRequirements').value.trim();
         const isActive = document.getElementById('jobIsActive').checked;
 
         if (!title || !description) {
-            showJobFormMessage('Please fill in all required fields.', 'error');
+            showJobFormMessage('Please fill in all required fields (Title and Description).', 'error');
             return;
         }
 
         try {
-            await JobsAPI.createJob({ title, description, isActive });
+            await JobsAPI.createJob({ 
+                title, 
+                description, 
+                department: department || null,
+                location: location || null,
+                employmentType: employmentType || null,
+                salaryRange: salaryRange || null,
+                requirements: requirements || null,
+                isActive 
+            });
             showJobFormMessage('Job created successfully!', 'success');
             form.reset();
+            document.getElementById('jobIsActive').checked = true; // Reset checkbox
             toggleJobForm();
             await loadJobs();
         } catch (error) {
@@ -54,12 +69,18 @@ async function loadJobs() {
                         ${job.isActive ? 'Active' : 'Inactive'}
                     </span>
                 </div>
+                ${job.department ? `<p class="job-meta"><strong>Department:</strong> ${escapeHtml(job.department)}</p>` : ''}
+                ${job.location ? `<p class="job-meta"><strong>Location:</strong> ${escapeHtml(job.location)}</p>` : ''}
+                ${job.employmentType ? `<p class="job-meta"><strong>Type:</strong> ${escapeHtml(job.employmentType)}</p>` : ''}
                 <p class="job-description">${escapeHtml(job.description)}</p>
                 <div class="job-card-actions">
                     <a href="applications.html?jobId=${job.jobId}" class="btn btn-secondary btn-sm">View Applications</a>
                     ${job.isActive ? `
-                        <button onclick="deactivateJob('${job.jobId}')" class="btn btn-danger btn-sm">Deactivate</button>
-                    ` : ''}
+                        <button onclick="deactivateJob('${job.jobId}')" class="btn btn-warning btn-sm">Deactivate</button>
+                    ` : `
+                        <button onclick="activateJob('${job.jobId}')" class="btn btn-success btn-sm">Activate</button>
+                    `}
+                    <button onclick="deleteJob('${job.jobId}', '${escapeHtml(job.title)}')" class="btn btn-danger btn-sm">Delete</button>
                 </div>
             </div>
         `).join('');
@@ -83,6 +104,42 @@ async function deactivateJob(jobId) {
     } catch (error) {
         console.error('Error deactivating job:', error);
         alert('Failed to deactivate job. Please try again.');
+    }
+}
+
+async function activateJob(jobId) {
+    if (!confirm('Are you sure you want to activate this job? It will start accepting applications.')) {
+        return;
+    }
+
+    try {
+        await JobsAPI.activateJob(jobId);
+        await loadJobs();
+    } catch (error) {
+        console.error('Error activating job:', error);
+        alert('Failed to activate job. Please try again.');
+    }
+}
+
+async function deleteJob(jobId, jobTitle) {
+    if (!confirm(`Are you sure you want to DELETE "${jobTitle}"?\n\nThis action cannot be undone. The job will be permanently removed from the system.\n\nNote: Jobs with existing applications cannot be deleted.`)) {
+        return;
+    }
+
+    try {
+        const result = await JobsAPI.deleteJob(jobId);
+        if (result.success) {
+            alert('Job deleted successfully!');
+            await loadJobs();
+        }
+    } catch (error) {
+        console.error('Error deleting job:', error);
+        const errorMessage = error.message || 'Failed to delete job. Please try again.';
+        if (errorMessage.includes('application')) {
+            alert(`Cannot delete job: ${errorMessage}`);
+        } else {
+            alert('Failed to delete job. Please try again.');
+        }
     }
 }
 

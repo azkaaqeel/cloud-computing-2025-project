@@ -20,6 +20,7 @@
             <nav>
                 <a href="dashboard.html" class="nav-link active">Dashboard</a>
                 <a href="jobs.html" class="nav-link">Jobs</a>
+                <a href="all-applications.html" class="nav-link">All Applications</a>
                 <a href="#" onclick="AuthAPI.logout(); return false;" class="nav-link">Logout</a>
             </nav>
         </div>
@@ -32,19 +33,26 @@
                 <p class="subtitle">Welcome back! Manage jobs and view applications.</p>
             </div>
 
+            <!-- Statistics Section -->
+            <div id="loading" class="loading">Loading statistics...</div>
+            <div id="stats" class="stats-grid"></div>
+
             <div class="dashboard-grid">
+                <!-- Applications Overview -->
                 <div class="dashboard-card">
-                    <h3>Jobs Management</h3>
-                    <p>Create, edit, and manage job postings</p>
-                    <a href="jobs.html" class="btn btn-primary">Manage Jobs</a>
+                    <h3>All Applications</h3>
+                    <p>View and filter all job applications</p>
+                    <a href="all-applications.html" class="btn btn-primary">View All Applications</a>
                 </div>
 
-                <div class="dashboard-card">
-                    <h3>Applications</h3>
-                    <p>View and manage job applications</p>
-                    <a href="jobs.html" class="btn btn-primary">View Applications</a>
+                <!-- Jobs Management -->
+                <div id="jobsSummary" class="dashboard-card">
+                    <!-- Will be populated by JavaScript -->
                 </div>
             </div>
+
+            <!-- Applications by Job -->
+            <div id="jobsStats" class="dashboard-section"></div>
         </div>
     </main>
 
@@ -53,6 +61,8 @@
             <p>&copy; 2025 HireHive Labs. All rights reserved.</p>
         </div>
     </footer>
+
+    <script src="dashboard.js"></script>
 </body>
 </html>
 

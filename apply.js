@@ -63,15 +63,34 @@ document.addEventListener('DOMContentLoaded', async function() {
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
 
+        // Collect all form data
         const fullName = document.getElementById('fullName').value.trim();
         const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const cgpa = document.getElementById('cgpa').value.trim();
+        const university = document.getElementById('university').value.trim();
+        const experienceYears = document.getElementById('experienceYears').value.trim();
         const file = fileInput.files[0];
         const currentJobId = form.dataset.jobId;
         const currentJobTitle = form.dataset.jobTitle || '';
 
         // Validate inputs
-        if (!fullName || !email || !file) {
-            showMessage('Please fill in all fields and select a file.', 'error');
+        if (!fullName || !email || !phone || !cgpa || !university || experienceYears === '' || !file) {
+            showMessage('Please fill in all required fields and select a resume file.', 'error');
+            return;
+        }
+
+        // Validate CGPA range
+        const cgpaValue = parseFloat(cgpa);
+        if (isNaN(cgpaValue) || cgpaValue < 0 || cgpaValue > 4.0) {
+            showMessage('Please enter a valid CGPA between 0.00 and 4.00', 'error');
+            return;
+        }
+
+        // Validate experience years
+        const expYears = parseInt(experienceYears);
+        if (isNaN(expYears) || expYears < 0) {
+            showMessage('Please enter a valid number of years of experience (0 or more)', 'error');
             return;
         }
 
@@ -102,45 +121,60 @@ document.addEventListener('DOMContentLoaded', async function() {
         messageDiv.className = 'message';
 
         try {
-            // Upload resume to Azure Blob Storage
-            await uploadToAzureBlob(file, fullName, email, currentJobId, applicationId, currentJobTitle);
+            // Create FormData to send to backend
+            const formData = new FormData();
+            formData.append('fullName', fullName);
+            formData.append('email', email);
+            formData.append('phone', phone);
+            formData.append('cgpa', cgpa);
+            formData.append('university', university);
+            formData.append('experienceYears', experienceYears);
+            formData.append('jobId', currentJobId);
+            formData.append('applicationId', applicationId);
+            formData.append('jobTitle', currentJobTitle);
+            formData.append('resumeFile', file);
 
-            // Submit application record to API
-            try {
-                await ApplicationsAPI.submitApplication({
-                    applicationId,
-                    jobId: currentJobId,
-                    applicantName: fullName,
-                    applicantEmail: email,
-                    status: 'Pending'
-                });
-            } catch (apiError) {
-                console.warn('Application record submission failed, but resume uploaded:', apiError);
-                // Continue even if API call fails - resume is uploaded
+            // Send form data to backend API
+            // Use full URL when backend runs on different port, or relative when same origin
+            const API_BASE_URL = window.API_BASE_URL || (window.location.port === '3000' ? '' : 'http://localhost:3000');
+            const response = await fetch(`${API_BASE_URL}/api/applications`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: 'Failed to submit application' }));
+                throw new Error(errorData.message || `Server error: ${response.status}`);
             }
 
-            // Show success message
-            showMessage('Application submitted successfully! Thank you for applying to HireHive Labs.', 'success');
-            
-            // Reset form
-            form.reset();
-            fileSizeInfo.style.display = 'none';
+            const result = await response.json();
 
-            // Redirect to careers page after 3 seconds
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 3000);
+            if (result.success) {
+                // Show success message
+                showMessage('Application submitted successfully! Thank you for applying to HireHive Labs.', 'success');
+                
+                // Reset form
+                form.reset();
+                fileSizeInfo.style.display = 'none';
+
+                // Redirect to careers page after 3 seconds
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 3000);
+            } else {
+                throw new Error(result.message || 'Application submission failed');
+            }
 
         } catch (error) {
-            console.error('Upload error:', error);
+            console.error('Application submission error:', error);
             let errorMessage = 'Application submission failed. Please try again.';
-            if (error.message && error.message.includes('CORS')) {
-                errorMessage = 'CORS Error: Configure CORS on Azure Storage. Check CORS_SETUP_INSTRUCTIONS.md';
-            } else if (error.message && error.message.includes('Failed to fetch')) {
-                errorMessage = 'Connection failed. Check CORS configuration. See CORS_SETUP_INSTRUCTIONS.md';
-            } else if (error.message) {
+            
+            if (error.message) {
                 errorMessage = error.message;
+            } else if (error.message && error.message.includes('Failed to fetch')) {
+                errorMessage = 'Connection failed. Please check if the server is running.';
             }
+            
             showMessage(errorMessage, 'error');
         } finally {
             uploadBtn.disabled = false;
